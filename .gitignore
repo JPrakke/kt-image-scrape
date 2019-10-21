@@ -105,3 +105,4 @@ venv.bak/
 
 # hold
 img-scrape
+.vscode
