@@ -7,10 +7,10 @@ import csv
 import os
 
 issue_csv = os.path.join('.'+'/Data', 'issue.csv')
-url = 'ktperformance.net'
+
 temp_part = 'RT-WARRIOR-30-10-14'
-temp_url = f'https://ktperformance.net/search.html?q={temp_part}'
-print(temp_url)
+url = f'https://ktperformance.net/search.html?q={temp_part}'
+print(url)
 # reads csv and pulls partnumber to search in scrape
 with open(issue_csv) as csvfile:
     read_csv = csv.reader(csvfile, delimiter=',')
@@ -24,4 +24,13 @@ option = webdriver.ChromeOptions()
 option.add_argument(' - incognito')
 
 browser = webdriver.Chrome('./chromedriver', chrome_options=option)
-browser.get(temp_url)
+browser.get(url)
+
+timeout = 100
+
+try:
+    WebDriverWait(browser, timeout).until(EC.visibility_of_element_located((By.XPATH,"//img[@class='lazyload']")))
+    print("timeout Passed")
+except TimeoutException:
+    print('Timed out on page load')
+    browser.quit()
