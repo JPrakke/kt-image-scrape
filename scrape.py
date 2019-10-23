@@ -23,7 +23,6 @@ def get_part_numbers(csv_input):
             part = row[0]
             part_numbers.append(part)
     return part_numbers
-
 def image_fix(url_to_fix):
     ''' Takes image thumbnail URL and Updates the URL to a full image
         example:
@@ -54,6 +53,7 @@ def scrape(url_to_scrape):
     return image_fix(image_source[1])
 
 if __name__ == "__main__":
+    log_list = []
     part_numbers = get_part_numbers(issue_csv)
     print('''
     --------------------Begining Data Retrieval---------------------------
@@ -68,11 +68,14 @@ if __name__ == "__main__":
             raise
         except:
             print('Image or part not found skipping')
-            log_file = open("error_log.txt", 'w+')
-            log_file.write(f'Part number:{part}')
-            log_file.close()
-
+            log_list.append(f'Part number:{part}\n')
+    
+    log_file = open("error_log.txt", 'w+')
+    for log in log_list:
+        log_file.write(log)
+    log_file.close()
     print('''
     --------------------Data Retrieval Complete---------------------------
+    ------------See error_log.txt for parts that failed scrape------------
     ''')
 
