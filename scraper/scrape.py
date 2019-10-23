@@ -6,7 +6,7 @@ import time
 import csv
 import os
 
-issue_csv = os.path.join('.'+'/Data', 'issue.csv')
+issue_csv = os.path.join('./'+'Data', 'issue.csv')
 
 # Testing part number will add aditional parts in loop. 
 # temp_part = 'RT-WARRIOR-30-10-14'
@@ -22,7 +22,9 @@ def get_part_numbers(csv_input):
         for row in read_csv:
             part = row[0]
             part_numbers.append(part)
+    print("partnumbers ran")
     return part_numbers
+
 def image_fix(url_to_fix):
     ''' Takes image thumbnail URL and Updates the URL to a full image
         example:
@@ -37,7 +39,7 @@ def image_fix(url_to_fix):
     image_list.insert(0,'F')
     corrected_image =''.join(image_list)
     corrected_url = f'https://ktperformance.net/images/{corrected_image}.jpg'
-    
+    print("image fix ran")
     return corrected_url
 
 def scrape(url_to_scrape):
@@ -50,32 +52,36 @@ def scrape(url_to_scrape):
     image_source=[]
     for image in image_tags:
         image_source.append(image['src'])
+    print(image_fix(image_source[1]))
     return image_fix(image_source[1])
 
-if __name__ == "__main__":
-    log_list = []
-    part_numbers = get_part_numbers(issue_csv)
-    print('''
-    --------------------Begining Data Retrieval---------------------------
-    ''')
-    for part in part_numbers:
-        try:
-            time.sleep(0)
-            scrape_url=f"https://ktperformance.net/search.html?q={part}" 
-            print(scrape_url)
-            urllib.request.urlretrieve(scrape(scrape_url), f"./Images/{part}.jpg")
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            print('Image or part not found skipping')
-            log_list.append(f'Part number:{part}\n')
-    
-    log_file = open("error_log.txt", 'w+')
-    for log in log_list:
-        log_file.write(log)
-    log_file.close()
-    print('''
-    --------------------Data Retrieval Complete---------------------------
-    ------------See error_log.txt for parts that failed scrape------------
-    ''')
 
+
+
+if __name__ == "__main__":
+        log_list = []
+        part_numbers = get_part_numbers(issue_csv)
+        print(part_numbers)
+        print('''
+        --------------------Begining Data Retrieval---------------------------
+        ''')
+        for part in part_numbers:
+            try:
+                time.sleep(1)
+                scrape_url=f"https://ktperformance.net/search.html?q={part}" 
+                print(scrape_url)
+                urllib.request.urlretrieve(scrape(scrape_url), os.path.join('./' + 'Images', f'{part}.jpg'))
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except:
+                print('Image or part not found skipping')
+                log_list.append(f'Part number:{part}\n')
+        
+        log_file = open("error_log.txt", 'w+')
+        for log in log_list:
+            log_file.write(log)
+        log_file.close()
+        print('''
+        --------------------Data Retrieval Complete---------------------------
+        ------------See error_log.txt for parts that failed scrape------------
+        ''')
