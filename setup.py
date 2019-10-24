@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-VERSION = '1.0.0'
+VERSION = '1.0.2'
 
 setup(
     name='KT_image_scrape',
