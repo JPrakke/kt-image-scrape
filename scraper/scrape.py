@@ -8,7 +8,7 @@ import os
 
 issue_csv = os.path.join('../'+'Data', 'issue.csv')
 
-# test_batch = ['D333MU@-UL', '07-t-002', 'D333MU@-UL', '07-t-002','D333MU@-UL', '07-t-002','D333MU@-UL', '07-t-002',]
+test_batch = ['D333MU@-ULjh', '07-t-002', 'D333MU@-UL', '07-t-002','D333MU@-UL', '07-t-002','D333MU@-UL', '07-t-002',]
 # Testing part number will add aditional parts in loop. 
 # temp_part = 'D333MU@-UL'
 # temp_part = '07-t-002'
@@ -61,30 +61,30 @@ def scrape(url_to_scrape):
 
 def run():    
     log_list = []
-    part_numbers = get_part_numbers(issue_csv)
+    # part_numbers = get_part_numbers(issue_csv)
     
     print('''
-    --------------------Begining Data Retrieval---------------------------
+    --------------------Begining Data Retrieval.--------------------------
     ''')
-    for part in part_numbers:
+    for part in test_batch:
         try:
             time.sleep(1)
             scrape_url=f'https://ktperformance.net/search.html?q={part}' 
-            print(f'Scraping {scrape_url}')
+            print(f'Scraping {scrape_url}.')
             urllib.request.urlretrieve(scrape(scrape_url), os.path.join('../' + 'Images', f'{part}.jpg'))
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
-            print('Image or part not found skipping')
+            print('Image or part not found, skipping.')
             log_list.append(f'Part number:{part}--{scrape_url}\n')
     
-    log_file = open('error_log.txt', 'w+')
+    log_file = open(os.path.join('../' +'Logs', 'error_log.txt'), 'w+')
     for log in log_list:
         log_file.write(log)
     log_file.close()
     print('''
-    --------------------Data Retrieval Complete---------------------------
-    ------------See error_log.txt for parts that failed scrape------------
+    --------------------Data Retrieval Complete.--------------------------
+    ------------See error_log.txt for parts that failed scrape.-----------
     ''')
 
 if __name__ == '__main__':
