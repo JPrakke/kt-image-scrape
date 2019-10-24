@@ -1,12 +1,18 @@
 from bs4 import BeautifulSoup
 from os.path import basename
 import urllib.request
+import xlsxwriter
 import requests
 import time
 import csv
 import os
 
 issue_csv = os.path.join('../'+'Data', 'issue.csv')
+
+workbook = xlsxwriter.Workbook(os.path.join('../'+'Docs','Part_images.xlsx'))
+worksheet = workbook.add_worksheet()
+worksheet.write('A1', 'Part Nummber')
+worksheet.write('B1', 'Image')
 
 test_batch = ['D333MU@-ULjh', '07-t-002', 'D333MU@-UL', '07-t-002','D333MU@-UL', '07-t-002','D333MU@-UL', '07-t-002',]
 # Testing part number will add aditional parts in loop. 
@@ -24,7 +30,6 @@ def get_part_numbers(csv_input):
         for row in read_csv:
             part = row[0]
             part_numbers.append(part)
-    print('partnumbers ran')
     return part_numbers
 
 def image_fix(url_to_fix):
@@ -41,7 +46,6 @@ def image_fix(url_to_fix):
     image_list.insert(0,'F')
     corrected_image =''.join(image_list)
     corrected_url = f'https://ktperformance.net/images/{corrected_image}.jpg'
-    print('image fix ran')
     return corrected_url
 
 def scrape(url_to_scrape):
@@ -59,19 +63,31 @@ def scrape(url_to_scrape):
     else:
         return image_fix(image_source[0])
 
+def xlsxwrite(part_number, counter):
+    worksheet.write(f'A{counter}', part_number)
+    try:
+        worksheet.insert_image(f'B{counter}', os.path.join('../' + 'Images', f'{part_number}.jpg'))
+    except:
+        worksheet.insert_image(f'B{counter}', os.path.join('../' + 'Images', f'{part_number}.png'))
+    try:
+        worksheet.insert_image(f'B{counter}', os.path.join('../' + 'Images', f'{part_number}.jpg'))
+    except:
+        worksheet.insert_image(f'B{counter}', os.path.join('../' + 'Images', f'{part_number}.gif'))
 def run():    
     log_list = []
-    # part_numbers = get_part_numbers(issue_csv)
-    
+    part_numbers = get_part_numbers(issue_csv)
+    counter = -23
     print('''
     --------------------Begining Data Retrieval.--------------------------
     ''')
-    for part in test_batch:
+    for part in part_numbers:
         try:
+            counter +=25
             time.sleep(1)
             scrape_url=f'https://ktperformance.net/search.html?q={part}' 
             print(f'Scraping {scrape_url}.')
             urllib.request.urlretrieve(scrape(scrape_url), os.path.join('../' + 'Images', f'{part}.jpg'))
+            xlsxwrite(part, counter)
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
@@ -87,5 +103,14 @@ def run():
     ------------See error_log.txt for parts that failed scrape.-----------
     ''')
 
+
+
+
 if __name__ == '__main__':
-    run()
+    # run()
+    part_numbers = get_part_numbers(issue_csv)
+    counter = -23
+    for part in part_numbers:
+        counter +=25
+        xlsxwrite(part, counter)
+    workbook.close()
