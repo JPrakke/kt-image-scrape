@@ -1,1 +1,7 @@
 Look into picking up where script left off
+work on deploying to web
+	-add user auth
+	-lookinto user upload
+	-lookinto download from site to dir
+	-add mongo db
+	-add pgadmin for user data
