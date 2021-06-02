@@ -15,7 +15,7 @@ setup(
         'idna==2.8',
         'requests==2.22.0',
         'soupsieve==1.9.4',
-        'urllib3==1.25.6',],
+        'urllib3==1.26.5',],
     packages=['scraper,],
     license='MIT License',
     description='scrapes site for thumbnails by part number',
